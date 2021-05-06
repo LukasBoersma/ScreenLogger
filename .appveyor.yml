@@ -1,0 +1,38 @@
+version: 1.0.{build}
+image:
+- Visual Studio 2019
+- Ubuntu
+configuration: Release
+environment:
+  matrix:
+  - qtpath: C:\Qt\5.15.2\msvc2019_64\bin
+    vcvars_path: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat
+  - qtpath: C:\Qt\5.15.2\msvc2019\bin
+    vcvars_path: C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars32.bat
+build_script:
+- mkdir build
+- cd build
+- mkdir deploy
+- cmd: 'call "%vcvars_path%"'
+- cmd: '"%qtpath%\qmake.exe" ..'
+- cmd: nmake
+- cmd: copy .\release\ScreenLogger.exe .\deploy
+- sh: export PATH=$HOME/Qt/5.15.2/gcc_64/bin/:$PATH
+- sh: sudo apt-get install -y libgl1-mesa-dev
+- sh: qmake ..
+- sh: make
+- sh: mkdir -p ./usr/bin
+- sh: mkdir -p ./usr/lib
+- sh: mkdir -p ./usr/share/applications/
+- sh: mkdir -p ./usr/share/icons/hicolor/64x64/
+- sh: mv ./ScreenLogger ./usr/bin/ScreenLogger
+- sh: mv ../res/ScreenLogger.desktop ./usr/share/applications/ScreenLogger.desktop
+- sh: mv ../res/icon.png ./usr/share/icons/hicolor/64x64/ScreenLogger_icon.png
+- sh: 'wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"'
+- sh: chmod +x ./linuxdeployqt-continuous-x86_64.AppImage
+- sh: ./linuxdeployqt-continuous-x86_64.AppImage ./usr/share/applications/ScreenLogger.desktop -appimage
+- sh: cp ./*.AppImage ./deploy
+- cd deploy
+- cmd: '"%qtpath%\windeployqt.exe" --release --no-opengl-sw --no-compiler-runtime --no-virtualkeyboard --no-translations --no-webkit2 --no-system-d3d-compiler ScreenLogger.exe'
+artifacts:
+- path: build/deploy

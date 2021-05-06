@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ScreenLogger">
+        <file>icon.png</file>
+    </qresource>
+</RCC>

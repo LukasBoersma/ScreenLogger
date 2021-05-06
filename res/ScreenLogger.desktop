@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=ScreenLogger
+Comment=A tool that regularly saves screenshots
+Exec=/usr/bin/ScreenLogger
+Icon=/usr/share/icons/hicolor/64x64/ScreenLogger_icon
+Categories=Utility;
